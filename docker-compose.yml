@@ -1,0 +1,27 @@
+services:
+  ocr-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mikrus_ocr_app
+    restart: unless-stopped
+    ports:
+      - "${OCR_PORT:-20211}:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_PASSWORD=${APP_PASSWORD:-111089}
+      - SECRET_KEY=${SECRET_KEY:-b7f8e3a2c5d1e9f4082167d3b5e4a8c2}
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./app.py:/app/app.py:ro
+      - ./templates:/app/templates:ro
+      - ./static:/app/static:ro
+    # Twarde ograniczenie pamięci RAM (512 MB) pod mikrowęzeł Mikrus
+    mem_limit: 512m
+    mem_reservation: 128m
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M

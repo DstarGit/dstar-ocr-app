@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mikrus OCR - Rozpoznawanie tekstu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo-container">
+            <div class="logo-icon">🔍</div>
+            <div class="logo-title">
+                <h1>Mikrus OCR</h1>
+                <p>Lekki silnik rozpoznawania tekstu (Tesseract pol+eng)</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-badge">
+                <span class="badge-dot"></span> Zoptymalizowany pod VPS
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm btn-logout" title="Wyloguj z aplikacji">
+                <span>Wyloguj</span> 🚪
+            </a>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Lewa kolumna: Upload i Drag & Drop -->
+        <section class="card upload-card">
+            <div class="card-header">
+                <h2>1. Wybierz obraz</h2>
+                <span class="file-types-hint">JPG, PNG, GIF (max 16MB)</span>
+            </div>
+
+            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Przeciągnij i upuść plik graficzny lub kliknij, aby wybrać">
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/gif" hidden>
+                
+                <div class="dropzone-content" id="dropzoneDefault">
+                    <div class="upload-icon">📁</div>
+                    <p class="drop-title">Przeciągnij i upuść obraz tutaj</p>
+                    <p class="drop-subtitle">lub <span class="browse-link">przeglądaj pliki z dysku</span></p>
+                    <p class="drop-details">Automatyczne skalowanie > 2000px | Pierwsza klatka GIF</p>
+                </div>
+
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <img id="imagePreview" alt="Podgląd wybranego obrazu">
+                    <div class="file-meta">
+                        <span id="fileName" class="file-name"></span>
+                        <span id="fileSize" class="file-size"></span>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnChangeFile">Zmień plik</button>
+                </div>
+            </div>
+
+            <div id="clientError" class="alert alert-error" style="display: none;" role="alert"></div>
+
+            <div class="ocr-settings">
+                <div class="form-group-inline">
+                    <label for="psmSelect" class="settings-label">Układ tekstu:</label>
+                    <select id="psmSelect" class="form-select">
+                        <option value="4" selected>Tabela / Formularz / Zrzut ekranu (PSM 4)</option>
+                        <option value="6">Pojedynczy blok tekstu (PSM 6)</option>
+                        <option value="3">Wielokolumnowy / Gazeta (PSM 3)</option>
+                        <option value="11">Rzadki tekst / Etykiety (PSM 11)</option>
+                    </select>
+                </div>
+                <div class="form-checkbox-inline">
+                    <input type="checkbox" id="enhanceCheckbox" checked>
+                    <label for="enhanceCheckbox" title="Skaluje zrzuty ekranu i zwiększa kontrast, wykrywając małe czcionki, cyfry i kropki">
+                        Optymalizacja małych czcionek i kontrastu (Zalecane)
+                    </label>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button id="btnProcess" class="btn btn-primary btn-block" disabled>
+                    <span class="btn-text">Rozpoznaj tekst (OCR)</span>
+                    <span class="spinner" id="btnSpinner" style="display: none;"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Prawa kolumna: Wynik rozpoznawania tekstu -->
+        <section class="card result-card">
+            <div class="card-header">
+                <h2>2. Wyodrębniony tekst</h2>
+                <div class="header-actions">
+                    <button id="btnCopy" class="btn btn-secondary btn-sm" disabled>
+                        <span class="copy-icon">📋</span>
+                        <span id="copyBtnText">Kopiuj do schowka</span>
+                    </button>
+                    <button id="btnClear" class="btn btn-ghost btn-sm" title="Wyczyść tekst" disabled>Wyczyść</button>
+                </div>
+            </div>
+
+            <div class="result-area-container">
+                <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Przetwarzanie OCR w toku...</p>
+                    <p class="loading-subtext">Analiza języka polskiego i angielskiego</p>
+                </div>
+
+                <textarea 
+                    id="resultText" 
+                    class="result-textarea" 
+                    placeholder="Wynik OCR pojawi się tutaj po przesłaniu i przetworzeniu obrazu..." 
+                    readonly
+                    spellcheck="false"
+                ></textarea>
+            </div>
+
+            <div class="result-footer">
+                <span id="statsWordCount">Słów: 0</span>
+                <span id="statsCharCount">Znaków: 0</span>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>Mikrus VPS OCR Service • Przetwarzanie w 100% in-memory • Bezpieczeństwo i niski narzut RAM</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

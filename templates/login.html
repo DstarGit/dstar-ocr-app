@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie - Mikrus OCR</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+    <div class="login-wrapper">
+        <div class="card login-card">
+            <div class="login-header">
+                <div class="login-icon">🔒</div>
+                <h1>Mikrus OCR</h1>
+                <p>Podaj hasło dostępu, aby odblokować aplikację</p>
+            </div>
+
+            {% if error %}
+            <div class="alert alert-error" role="alert">
+                <span>⚠️</span> {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('login') }}" class="login-form">
+                <input type="hidden" name="next" value="{{ next }}">
+                
+                <div class="form-group">
+                    <label for="password">Hasło aplikacji</label>
+                    <div class="password-input-group">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Wprowadź hasło z pliku .env" 
+                            required 
+                            autofocus
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="btn-toggle-password" id="btnTogglePassword" title="Pokaż / ukryj hasło">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Odblokuj dostęp
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p>Zabezpieczenie serwera VPS Mikrus • Hasło zdefiniowane w <code>.env</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btnToggle = document.getElementById('btnTogglePassword');
+        const passwordInput = document.getElementById('password');
+
+        if (btnToggle && passwordInput) {
+            btnToggle.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                btnToggle.textContent = isPassword ? '🙈' : '👁️';
+            });
+        }
+    </script>
+</body>
+</html>

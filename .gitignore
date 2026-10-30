@@ -1,0 +1,23 @@
+# Środowisko i wrażliwe dane (hasła, klucze sesji)
+.env
+*.env.local
+
+# Pamięć podręczna Pythona
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Środowisko wirtualne
+venv/
+.venv/
+env/
+
+# Logi i pliki tymczasowe
+*.log
+scratch/
+tmp/
+*.tmp
+
+# Pliki systemowe
+.DS_Store
+Thumbs.db
